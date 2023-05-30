@@ -2,8 +2,12 @@ package ariefbelajar.java.validation;
 
 import ariefbelajar.java.validation.group.CreditCardPaymentGroup;
 import ariefbelajar.java.validation.group.VirtualAccountPaymentGroup;
+import ariefbelajar.java.validation.payload.EmailErrorPayload;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.ConvertGroup;
+import jakarta.validation.groups.Default;
 import org.hibernate.validator.constraints.LuhnCheck;
 import org.hibernate.validator.constraints.Range;
 
@@ -13,19 +17,32 @@ public class Payment {
             message = "orderid must not blank")
     private String orderId;
 
-    @Range(groups = {CreditCardPaymentGroup.class, VirtualAccountPaymentGroup.class},
-            min = 10_000L, max = 100_000_000L, message = "amount must between 10_000 and 100_000_000")
+    @Range(
+            groups = {CreditCardPaymentGroup.class, VirtualAccountPaymentGroup.class},
+            min = 10_000L,
+            max = 100_000_000L,
+            message = "amount must between 10_000 and 100_000_000")
     @NotNull(message = "amount must noy null")
     private Long amount;
 
-    @LuhnCheck(groups = {CreditCardPaymentGroup.class},
-            message = "invalid credit card number")
+    @LuhnCheck(
+            groups = {CreditCardPaymentGroup.class},
+            message = "invalid credit card number",
+            payload = {EmailErrorPayload.class}
+    )
     @NotBlank(message = "credit card must not blank")
     private String creditCard;
 
     @NotBlank(groups = {VirtualAccountPaymentGroup.class},
             message = "virtual account must not blank")
     private String virtualAccount;
+
+    @Valid
+    @NotNull(groups = {CreditCardPaymentGroup.class, VirtualAccountPaymentGroup.class},
+    message = "customer must not null")
+    @ConvertGroup(from = CreditCardPaymentGroup.class, to = Default.class)
+    @ConvertGroup(from = VirtualAccountPaymentGroup.class, to = Default.class)
+    private Customer customer;
 
     @Override
     public String toString() {
@@ -34,7 +51,16 @@ public class Payment {
                 ", amount=" + amount +
                 ", creditCard='" + creditCard + '\'' +
                 ", virtualAccount='" + virtualAccount + '\'' +
+                ", customer=" + customer +
                 '}';
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public String getVirtualAccount() {
