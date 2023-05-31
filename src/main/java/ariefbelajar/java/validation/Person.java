@@ -20,7 +20,6 @@ public class Person {
     @Valid
     private Address address;
 
-
     public Person() {
     }
 
@@ -60,4 +59,14 @@ public class Person {
                 ", lastName='" + lastName + '\'' +
                 '}';
     }
+
+    public void sayHello(@NotBlank(message = "name must not blank") String name) {
+        System.out.println("Hello " + name + ", my name is " + firstName);
+    }
+
+    @NotBlank(message = "full name must not blank")
+    public String fullName() {
+        return firstName + " " + lastName;
+    }
+
 }
