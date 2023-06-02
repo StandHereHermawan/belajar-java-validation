@@ -1,6 +1,7 @@
 package ariefbelajar.java.validation;
 
 import ariefbelajar.java.validation.constraint.CheckCase;
+import ariefbelajar.java.validation.constraint.CheckOrderId;
 import ariefbelajar.java.validation.enums.CaseMode;
 import ariefbelajar.java.validation.group.CreditCardPaymentGroup;
 import ariefbelajar.java.validation.group.VirtualAccountPaymentGroup;
@@ -16,27 +17,16 @@ import org.hibernate.validator.constraints.Range;
 
 public class Payment {
 
-    @CheckCase(groups = {CreditCardPaymentGroup.class, VirtualAccountPaymentGroup.class},
-    mode = CaseMode.UPPER,message = "{order.id.upper}")
-    @NotBlank(groups = {CreditCardPaymentGroup.class, VirtualAccountPaymentGroup.class},
-            message = "{order.id.notblank}")
-    @Size(groups = {CreditCardPaymentGroup.class, VirtualAccountPaymentGroup.class},
-            min = 1,max = 10, message = "{order.id.size}")
+    @CheckOrderId(groups = {CreditCardPaymentGroup.class, VirtualAccountPaymentGroup.class})
     private String orderId;
 
-    @Range(
-            groups = {CreditCardPaymentGroup.class, VirtualAccountPaymentGroup.class},
-            min = 10_000L,
-            max = 100_000_000L,
-            message = "{order.amount.range}")
+    @Range(groups = {CreditCardPaymentGroup.class, VirtualAccountPaymentGroup.class},
+            min = 10_000L, max = 100_000_000L, message = "{order.amount.range}")
     @NotNull(message = "amount must not null")
     private Long amount;
 
-    @LuhnCheck(
-            groups = {CreditCardPaymentGroup.class},
-            message = "invalid credit card number",
-            payload = {EmailErrorPayload.class}
-    )
+    @LuhnCheck(groups = {CreditCardPaymentGroup.class},
+            message = "invalid credit card number", payload = {EmailErrorPayload.class})
     @NotBlank(message = "credit card must not blank")
     private String creditCard;
 

@@ -14,7 +14,7 @@ public class CheckCaseValidator implements ConstraintValidator<CheckCase, String
     }
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null) return true; // not validate null value
 
         if (caseMode == CaseMode.UPPER) {
